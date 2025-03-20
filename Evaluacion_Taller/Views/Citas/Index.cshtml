@@ -1,0 +1,45 @@
+﻿@model List<TallerMecanicoMVC.Models.Cita>
+
+@{
+    ViewBag.Title = "Listado de Citas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center text-warning">📅 Listado de Citas</h2>
+
+    <div class="text-end mb-3">
+        <a href="@Url.Action("Crear")" class="btn btn-primary">➕ Agendar Nueva Cita</a>
+    </div>
+
+    <table class="table table-dark table-striped text-center">
+        <thead class="bg-warning text-dark">
+            <tr>
+                <th>#</th>
+                <th>Vehículo</th>
+                <th>Fecha y Hora</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cita in Model)
+            {
+                <tr>
+                    <td>@cita.IdCita</td>
+                    <td>@cita.Marca - @cita.Modelo (@cita.Placas)</td>
+                    <td>@cita.FechaHora.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <span class="badge @(cita.Estado == "Aprobada" ? "bg-success" : (cita.Estado == "Rechazada" ? "bg-danger" : "bg-warning"))">
+                            @cita.Estado
+                        </span>
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Editar", new { id = cita.IdCita })" class="btn btn-sm btn-outline-light">✏️ Editar</a>
+                        <a href="@Url.Action("Eliminar", new { id = cita.IdCita })" class="btn btn-sm btn-outline-danger">🗑️ Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

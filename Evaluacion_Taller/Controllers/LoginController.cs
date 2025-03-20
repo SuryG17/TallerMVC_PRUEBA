@@ -13,7 +13,6 @@ namespace TallerMecanicoMVC.Controllers
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                ViewBag.Error = "Ingrese su email y contraseña";
                 return View();
             }
 
@@ -35,7 +34,7 @@ namespace TallerMecanicoMVC.Controllers
                     readerCliente.Read();
                     Session["Usuario"] = readerCliente["Nombre"].ToString();
                     Session["TipoUsuario"] = "Cliente";
-                    return RedirectToAction("DashboardCliente", "Home");
+                    return RedirectToAction("Crear", "Citas"); // Cliente redirigido a crear cita
                 }
 
                 readerCliente.Close();
@@ -52,7 +51,7 @@ namespace TallerMecanicoMVC.Controllers
                     readerAdmin.Read();
                     Session["Usuario"] = readerAdmin["Nombre"].ToString();
                     Session["TipoUsuario"] = "Administrador";
-                    return RedirectToAction("DashboardAdmin", "Home");
+                    return RedirectToAction("Index", "Citas"); // Administrador redirigido a la lista de citas
                 }
             }
 
