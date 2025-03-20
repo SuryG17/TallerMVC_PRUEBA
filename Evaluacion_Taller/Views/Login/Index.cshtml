@@ -1,109 +1,200 @@
 ﻿@{
-	ViewBag.Title = "Iniciar Sesión";
-	Layout = null; 
+    ViewBag.Title = "Iniciar Sesión";
+    Layout = null;
 }
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Iniciar Sesión</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-	<style>
-		body {
-			height: 100vh;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background: linear-gradient(135deg, #ffffff, #007bff);
-		}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Iniciar Sesión - Taller Mecánico</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-		.login-container {
-			width: 800px;
-			background: white;
-			border-radius: 10px;
-			overflow: hidden;
-			display: flex;
-			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-		}
+    <style>
+        /* Estilo General */
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('https://images.unsplash.com/photo-1571689936040-130028421e4e') no-repeat center center;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+        }
 
-		.left-side {
-			width: 50%;
-			padding: 40px;
-			text-align: center;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			background-color: #f8f9fa;
-		}
+        .login-container {
+            width: 900px;
+            background: #021730; /* Azul oscuro */
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
 
-		.right-side {
-			width: 50%;
-			padding: 40px;
-			background-color: #007bff;
-			color: white;
-		}
+        /* Lado Izquierdo: Información */
+        .left-side {
+            width: 50%;
+            padding: 40px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #F9CD16; /* Amarillo mecánico */
+            color: #000;
+        }
 
-		.login-form input {
-			margin-bottom: 15px;
-		}
+            .left-side h2 {
+                font-weight: bold;
+                margin-bottom: 15px;
+            }
 
-		.btn-primary {
-			width: 100%;
-			font-size: 18px;
-		}
+            .left-side p {
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
 
-		.btn-secondary {
-			width: 100%;
-			font-size: 14px;
-			background-color: transparent;
-			border: 1px solid white;
-			color: white;
-		}
+            .left-side img {
+                width: 140px;
+                margin-top: 10px;
+            }
 
-			.btn-secondary:hover {
-				background-color: white;
-				color: #007bff;
-			}
-	</style>
+        /* Lado Derecho: Formulario */
+        .right-side {
+            width: 50%;
+            padding: 40px;
+            background-color: #58606D; /* Gris oscuro */
+            color: white;
+        }
+
+            .right-side h3 {
+                color: #F9CD16;
+                text-align: center;
+                font-weight: bold;
+                margin-bottom: 20px;
+            }
+
+        .login-form input {
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: none;
+            padding: 10px;
+            background: #B3B3B3;
+            color: black;
+            width: 100%;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            width: 100%;
+            padding-right: 40px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            width: 100%;
+            font-size: 18px;
+            background-color: #F9CD16;
+            border: none;
+            color: black;
+            font-weight: bold;
+        }
+
+            .btn-primary:hover {
+                background-color: #d9b013;
+            }
+
+        .btn-secondary {
+            width: 100%;
+            font-size: 14px;
+            background-color: transparent;
+            border: 2px solid #F9CD16;
+            color: #F9CD16;
+            margin-top: 10px;
+        }
+
+            .btn-secondary:hover {
+                background-color: #F9CD16;
+                color: black;
+            }
+
+        .forgot-password {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            color: #F9CD16;
+            font-size: 14px;
+        }
+
+            .forgot-password:hover {
+                text-decoration: underline;
+            }
+    </style>
 </head>
 <body>
 
-	<div class="login-container">
-		<!-- Lado Izquierdo: Información -->
-		<div class="left-side">
-			<h2>Comienza a gestionar tu negocio</h2>
-			<p>Regístrate para administrar clientes, citas y más.</p>
-			<img src="https://cdn-icons-png.flaticon.com/512/3081/3081192.png" width="100" />
-		</div>
+    <div class="login-container">
+        <!-- Lado Izquierdo: Información -->
+        <div class="left-side">
+            <h2>Bienvenido al Taller</h2>
+            <p>Inicia o registrate para agendar o ver el estatus de tu cita.</p>
+            <img src="https://cdn-icons-png.flaticon.com/512/3081/3081192.png" />
+        </div>
 
-		<!-- Lado Derecho: Login -->
-		<div class="right-side">
-			<h3 class="text-center">¡Iniciar Sesión!</h3>
-			<p class="text-center">Ingresa tus credenciales</p>
+        <!-- Lado Derecho: Login -->
+        <div class="right-side">
+            <h3>¡Iniciar Sesión!</h3>
 
-			@if (ViewBag.Error != null)
-			{
-				<div class="alert alert-danger">@ViewBag.Error</div>
-			}
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
 
-			@using (Html.BeginForm("Login", "Login", FormMethod.Post, new { @class = "login-form" }))
-			{
-				<label>Email</label>
-				@Html.TextBox("Email", "", new { @class = "form-control", placeholder = "Ingrese su correo", type = "email", required = "required" })
+            @using (Html.BeginForm("Login", "Login", FormMethod.Post, new { @class = "login-form" }))
+            {
+                <label>Email</label>
+                @Html.TextBox("Email", "", new { @class = "form-control", placeholder = "Ingrese su correo", type = "email", required = "required" })
 
-				<label>Contraseña</label>
-				@Html.Password("Contraseña", "", new { @class = "form-control", placeholder = "Ingrese su contraseña", required = "required" })
+                <label>Contraseña</label>
+                <div class="password-container">
+                    @Html.Password("Contraseña", "", new { @class = "form-control", placeholder = "Ingrese su contraseña", required = "required" })
+                    <span class="toggle-password" onclick="togglePassword()">👁️</span>
+                </div>
 
-				<button type="submit" class="btn btn-primary">INGRESAR</button>
+                <a href="@Url.Action("Index", "Citas")" class="btn btn-primary">INGRESAR</a>
 
-				<div class="mt-3 text-center">
-					<a href="@Url.Action("Registro", "Clientes")" class="btn btn-secondary">Registrarse</a>
-				</div>
-			}
-		</div>
-	</div>
+                <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+
+                <div class="mt-3 text-center">
+                    <a href="@Url.Action("Registro", "Clientes")" class="btn btn-secondary">Registrarse</a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            let passwordField = document.querySelector("input[name='Contraseña']");
+            let icon = document.querySelector(".toggle-password");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                icon.textContent = "🙈";
+            } else {
+                passwordField.type = "password";
+                icon.textContent = "👁️";
+            }
+        }
+    </script>
 
 </body>
 </html>

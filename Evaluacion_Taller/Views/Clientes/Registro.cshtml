@@ -1,52 +1,209 @@
 ﻿@model TallerMecanicoMVC.Models.Cliente
 
 @{
-	ViewBag.Title = "Registro de Cliente";
+    ViewBag.Title = "Registro de Cliente";
+    Layout = null;
 }
 
-<h2>Registro de Cliente</h2>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Registro de Cliente - Taller Mecánico</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-@if (ViewBag.Error != null)
-{
-	<div class="alert alert-danger">@ViewBag.Error</div>
-}
+    <style>
+        /* Estilo General */
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('https://images.unsplash.com/photo-1517048676732-d65bc937f952') no-repeat center center;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+        }
 
-@if (ViewBag.Success != null)
-{
-	<div class="alert alert-success">@ViewBag.Success</div>
-}
+        .register-container {
+            width: 900px;
+            background: #021730; /* Azul oscuro */
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
 
-@using (Html.BeginForm())
-{
-	<div class="form-group">
-		<label>Nombre:</label>
-		@Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", required = "required" })
-		@Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger" })
-	</div>
+        /* Lado Izquierdo: Información */
+        .left-side {
+            width: 50%;
+            padding: 40px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #F9CD16; /* Amarillo mecánico */
+            color: #000;
+        }
 
-	<div class="form-group">
-		<label>Apellido:</label>
-		@Html.TextBoxFor(m => m.Apellido, new { @class = "form-control", required = "required" })
-		@Html.ValidationMessageFor(m => m.Apellido, "", new { @class = "text-danger" })
-	</div>
+            .left-side h2 {
+                font-weight: bold;
+                margin-bottom: 15px;
+            }
 
-	<div class="form-group">
-		<label>Email:</label>
-		@Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", required = "required" })
-		@Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-	</div>
+            .left-side p {
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
 
-	<div class="form-group">
-		<label>Teléfono:</label>
-		@Html.TextBoxFor(m => m.Telefono, new { @class = "form-control", required = "required" })
-		@Html.ValidationMessageFor(m => m.Telefono, "", new { @class = "text-danger" })
-	</div>
+            .left-side img {
+                width: 140px;
+                margin-top: 10px;
+            }
 
-	<div class="form-group">
-		<label>Contraseña:</label>
-		@Html.PasswordFor(m => m.Contraseña, new { @class = "form-control", required = "required" })
-		@Html.ValidationMessageFor(m => m.Contraseña, "", new { @class = "text-danger" })
-	</div>
+        /* Lado Derecho: Formulario */
+        .right-side {
+            width: 50%;
+            padding: 40px;
+            background-color: #58606D; /* Gris oscuro */
+            color: white;
+        }
 
-	<button type="submit" class="btn btn-primary">Registrar</button>
-}
+            .right-side h3 {
+                color: #F9CD16;
+                text-align: center;
+                font-weight: bold;
+                margin-bottom: 20px;
+            }
+
+        .form-control {
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: none;
+            padding: 10px;
+            background: #B3B3B3;
+            color: black;
+            width: 100%;
+        }
+
+        .btn-primary {
+            width: 100%;
+            font-size: 18px;
+            background-color: #F9CD16;
+            border: none;
+            color: black;
+            font-weight: bold;
+        }
+
+            .btn-primary:hover {
+                background-color: #d9b013;
+            }
+
+        .btn-secondary {
+            width: 100%;
+            font-size: 14px;
+            background-color: transparent;
+            border: 2px solid #F9CD16;
+            color: #F9CD16;
+            margin-top: 10px;
+        }
+
+            .btn-secondary:hover {
+                background-color: #F9CD16;
+                color: black;
+            }
+
+        /* 🔒 Estilos para Mostrar/Ocultar contraseña */
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="register-container">
+        <!-- Lado Izquierdo: Información -->
+        <div class="left-side">
+            <h2>Regístrate en el Taller</h2>
+            <p>Forma parte de nuestro servicio para gestionar tus vehículos y citas.</p>
+            <img src="https://cdn-icons-png.flaticon.com/512/3081/3081192.png" />
+        </div>
+
+        <!-- Lado Derecho: Formulario -->
+        <div class="right-side">
+            <h3>Registro de Cliente</h3>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
+
+            @if (ViewBag.Success != null)
+            {
+                <div class="alert alert-success">@ViewBag.Success</div>
+            }
+
+            @using (Html.BeginForm("Registro", "Clientes", FormMethod.Post, new { @class = "register-form" }))
+            {
+                <label>Nombre</label>
+                @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", required = "required", placeholder = "Ingrese su nombre" })
+                @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger" })
+
+                <label>Apellido</label>
+                @Html.TextBoxFor(m => m.Apellido, new { @class = "form-control", required = "required", placeholder = "Ingrese su apellido" })
+                @Html.ValidationMessageFor(m => m.Apellido, "", new { @class = "text-danger" })
+
+                <label>Email</label>
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", required = "required", placeholder = "Ingrese su correo electrónico" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+
+                <label>Teléfono</label>
+                @Html.TextBoxFor(m => m.Telefono, new { @class = "form-control", required = "required", placeholder = "Ingrese su teléfono" })
+                @Html.ValidationMessageFor(m => m.Telefono, "", new { @class = "text-danger" })
+
+                <!-- 🔒 Contraseña -->
+                <label>Contraseña</label>
+                <div class="password-container">
+                    @Html.PasswordFor(m => m.Contraseña, new { @class = "form-control password-field", required = "required", placeholder = "Ingrese su contraseña" })
+                    <span class="toggle-password" onclick="togglePassword('ConfirmarContraseña')">👁</span>
+                </div>
+                @Html.ValidationMessageFor(m => m.Contraseña, "", new { @class = "text-danger" })
+
+                <!-- 🔒 Confirmar Contraseña -->
+                <label>Confirmar Contraseña</label>
+                <div class="password-container">
+                    <input type="password" id="ConfirmarContraseña" class="form-control password-field" required placeholder="Confirme su contraseña" />
+                    <span class="toggle-password" onclick="togglePassword('ConfirmarContraseña')">👁</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary">REGISTRARME</button>
+
+                <div class="mt-3 text-center">
+                    <a href="@Url.Action("Index", "Login")" class="btn btn-secondary">¿Ya tienes cuenta? Inicia sesión</a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(fieldId) {
+            var field = document.getElementById(fieldId);
+            if (field.type === "password") {
+                field.type = "text";
+            } else {
+                field.type = "password";
+            }
+        }
+    </script>
+
+</body>
+</html>
