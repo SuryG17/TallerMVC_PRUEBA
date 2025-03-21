@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Web.Mvc;
 using TallerMecanicoMVC.Models;
 
@@ -39,12 +40,25 @@ namespace TallerMecanicoMVC.Controllers
             }
             return View(citas);
         }
+
+
         [HttpPost]
         public JsonResult AgregarVehiculo(int ClienteID, string Marca, string Modelo, int Año, string Placas)
         {
             try
             {
-                int nuevoVehiculoID = 0;
+                // 🔍 Verificar si ClienteID está en la sesión
+                if (ClienteID == 0 )
+                {
+                    ClienteID = Convert.ToInt32(Session["ClienteID"]);
+                }
+
+                Console.WriteLine($"📢 ClienteID en AgregarVehiculo: {ClienteID}");
+
+                if (ClienteID == 0)
+                {
+                    return Json(new { success = false, message = "⚠️ ClienteID es inválido. Verifica si el usuario ha iniciado sesión." });
+                }
 
                 using (SqlConnection conn = new SqlConnection(conexion))
                 {
@@ -58,7 +72,6 @@ namespace TallerMecanicoMVC.Controllers
                         cmd.Parameters.AddWithValue("@Año", Año);
                         cmd.Parameters.AddWithValue("@Placas", Placas);
 
-                        // Parámetro de salida
                         SqlParameter outputParam = new SqlParameter("@NuevoVehiculoID", SqlDbType.Int)
                         {
                             Direction = ParameterDirection.Output
@@ -67,34 +80,38 @@ namespace TallerMecanicoMVC.Controllers
 
                         cmd.ExecuteNonQuery();
 
-                        nuevoVehiculoID = Convert.ToInt32(outputParam.Value);
+                        int nuevoVehiculoID = Convert.ToInt32(outputParam.Value);
+
+                        if (nuevoVehiculoID == -1)
+                        {
+                            return Json(new { success = false, message = "⚠️ Las placas ya están registradas en otro vehículo." });
+                        }
+
+                        return Json(new { success = true, idVehiculo = nuevoVehiculoID, nombreVehiculo = Marca + " - " + Modelo });
                     }
                 }
-
-                if (nuevoVehiculoID == -1)
-                {
-                    return Json(new { success = false, message = "⚠️ Las placas ya están registradas en otro vehículo." });
-                }
-
-                return Json(new { success = true, idVehiculo = nuevoVehiculoID, nombreVehiculo = Marca + " - " + Modelo });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "❌ Error al agregar el vehículo: " + ex.Message });
+                Console.WriteLine("Error en AgregarVehiculo: " + ex.Message);
+                return Json(new { success = false, message = "❌ Error en el servidor: " + ex.Message });
             }
         }
+
 
 
         [HttpGet]
         public ActionResult Crear()
         {
+            List<SelectListItem> vehiculos = new List<SelectListItem>();
             using (SqlConnection conn = new SqlConnection(conexion))
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand("SELECT ID, Marca + ' - ' + Modelo AS NombreVehiculo FROM Vehiculos", conn);
+                SqlCommand cmd = new SqlCommand(
+                    "SELECT ID, Marca + ' - ' + Modelo AS NombreVehiculo FROM Vehiculos", conn
+                );
                 SqlDataReader reader = cmd.ExecuteReader();
 
-                List<SelectListItem> vehiculos = new List<SelectListItem>();
                 while (reader.Read())
                 {
                     vehiculos.Add(new SelectListItem
@@ -103,79 +120,78 @@ namespace TallerMecanicoMVC.Controllers
                         Text = reader["NombreVehiculo"].ToString()
                     });
                 }
-
-                ViewBag.Vehiculos = new SelectList(vehiculos, "Value", "Text");
             }
+           
+            ViewBag.Vehiculos = new SelectList(vehiculos, "Value", "Text");
 
-            return View(); 
+            // Retorna el modelo vacío o con valores por defecto
+            return View(new Cita());
         }
+
+
+
 
         // 📌 Agendar Cita
         [HttpPost]
-        public ActionResult Crear(Cita cita)
+        public ActionResult AgendarCita(Cita cita)
         {
-            if (cita == null || cita.IdVehiculo <= 0 || cita.FechaHora == DateTime.MinValue)
             {
-                ViewBag.Error = "⚠️ Datos inválidos. Verifique la información ingresada.";
-                return View("Crear", cita);
-            }
-
-            using (SqlConnection conn = new SqlConnection(conexion))
-            {
-                try
+                if (cita == null || cita.IdVehiculo <= 0 || cita.FechaHora == DateTime.MinValue)
                 {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("SP_TM_AgendarCita", conn))
+                    ViewBag.Error = "⚠️ Datos inválidos. Verifique la información ingresada.";
+                    return View("Crear", cita);
+                }
+
+                using (SqlConnection conn = new SqlConnection(conexion))
+                {
+                    try
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
-
-                        // Parámetros de entrada
-                        cmd.Parameters.AddWithValue("@VehiculoID", cita.IdVehiculo);
-                        cmd.Parameters.AddWithValue("@FechaHora", cita.FechaHora);
-
-                        // Parámetro de salida
-                        SqlParameter outputParam = new SqlParameter("@Resultado", SqlDbType.Int)
+                        conn.Open();
+                        using (SqlCommand cmd = new SqlCommand("SP_TM_AgendarCita", conn))
                         {
-                            Direction = ParameterDirection.Output
-                        };
-                        cmd.Parameters.Add(outputParam);
+                            cmd.CommandType = CommandType.StoredProcedure;
 
-                        // Ejecutar procedimiento almacenado
-                        cmd.ExecuteNonQuery();
+                            cmd.Parameters.AddWithValue("@VehiculoID", cita.IdVehiculo);
+                            cmd.Parameters.AddWithValue("@FechaHora", cita.FechaHora);
 
-                        // Capturar el resultado
-                        int resultado = (int)outputParam.Value;
+                            SqlParameter outputParam = new SqlParameter("@Resultado", SqlDbType.Int)
+                            {
+                                Direction = ParameterDirection.Output
+                            };
+                            cmd.Parameters.Add(outputParam);
 
-                        switch (resultado)
-                        {
-                            case -1:
-                                ViewBag.Error = "⚠️ El vehículo seleccionado no existe.";
+                            cmd.ExecuteNonQuery();
+
+                            int resultado = Convert.ToInt32(outputParam.Value);
+
+                            if (resultado == -1)
+                            {
+                                ViewBag.Error = "⚠️ El vehículo seleccionado no pertenece al cliente.";
                                 return View("Crear", cita);
+                            }
 
-                            case 0:
-                                ViewBag.Error = "⚠️ Esta hora ya está ocupada. Seleccione otra.";
+                            if (resultado == -2)
+                            {
+                                ViewBag.Error = "⚠️ Ya tenemos una cita programada a esa hora, Por favor seleccione otra y con gusto lo atenderemos.";
                                 return View("Crear", cita);
+                            }
 
-                            case 1:
-                                ViewBag.Success = "✅ Cita agendada correctamente.";
-                                return RedirectToAction("Index");
-
-                            default:
-                                ViewBag.Error = "⚠️ Ocurrió un error inesperado.";
-                                return View("Crear", cita);
+                            ViewBag.Success = "✅ Cita agendada correctamente.";
+                            return RedirectToAction("Index");
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    ViewBag.Error = "❌ Error en la base de datos: " + ex.Message;
-                    return View("Crear", cita);
+                    catch (Exception ex)
+                    {
+                        ViewBag.Error = "❌ Error en la base de datos: " + ex.Message;
+                        return View("Crear", cita);
+                    }
                 }
             }
         }
 
-        // 📌 Aprobar/Rechazar Cita
-        [HttpPost]
+
+            // 📌 Aprobar/Rechazar Cita
+            [HttpPost]
         public ActionResult AprobarRechazar(int id, string estado, string comentario, DateTime? fechaTerminacion)
         {
             using (SqlConnection conn = new SqlConnection(conexion))
@@ -193,5 +209,7 @@ namespace TallerMecanicoMVC.Controllers
             }
             return RedirectToAction("Index");
         }
+
+
     }
 }

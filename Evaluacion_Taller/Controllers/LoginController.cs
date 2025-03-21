@@ -21,7 +21,7 @@ namespace TallerMecanicoMVC.Controllers
             {
                 con.Open();
 
-                // 🔍 Verificar si el usuario existe
+                //Verificar si el usuario existe
                 string queryUsuario = "SELECT COUNT(*) FROM (SELECT Email FROM Clientes UNION SELECT Email FROM Administradores) AS Usuarios WHERE Email = @Email";
                 using (SqlCommand cmdUsuario = new SqlCommand(queryUsuario, con))
                 {
@@ -35,7 +35,7 @@ namespace TallerMecanicoMVC.Controllers
                     }
                 }
 
-                // 🔹 Verificar si es un Cliente
+                // Verificar si es un Cliente
                 string queryCliente = "SELECT ID, Nombre FROM Clientes WHERE Email = @Email AND Contraseña = @Password";
                 using (SqlCommand cmdCliente = new SqlCommand(queryCliente, con))
                 {
@@ -45,15 +45,17 @@ namespace TallerMecanicoMVC.Controllers
                     {
                         if (readerCliente.HasRows)
                         {
-                            readerCliente.Read();
+                            readerCliente.Read();  // 🔥 Importante: leer los datos antes de acceder
                             Session["Usuario"] = readerCliente["Nombre"].ToString();
                             Session["TipoUsuario"] = "Cliente";
-                            return RedirectToAction("Index", "Citas"); // Cliente redirigido a agendar cita
+                            Session["ClienteID"] = readerCliente["ID"].ToString();  // 🔥 Ahora sí se almacena bien
+                            Console.WriteLine("📢 ClienteID guardado en sesión: " + Session["ClienteID"]); // Depuración
+                            return RedirectToAction("Index", "Citas");
                         }
                     }
                 }
 
-                // 🔹 Verificar si es un Administrador
+                //  Verificar si es un Administrador
                 string queryAdmin = "SELECT ID, Nombre FROM Administradores WHERE Email = @Email AND Contraseña = @Password";
                 using (SqlCommand cmdAdmin = new SqlCommand(queryAdmin, con))
                 {
