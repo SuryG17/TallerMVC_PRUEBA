@@ -6,30 +6,194 @@
 }
 
 <div class="container mt-5">
-    <h2 class="text-center text-warning">🛠️ Agendar Cita</h2>
-
-    <div class="card shadow-lg">
-        <div class="card-header bg-dark text-warning">
-            📆 Información de la Cita
+    <div class="card citas-container">
+        <div class="card-header text-center">
+            <h2>🛠️ Agendar Cita</h2>
         </div>
-        <div class="card-body bg-secondary text-white">
-            @using (Html.BeginForm("Crear", "Citas", FormMethod.Post))
+        <div class="card-body">
+            @using (Html.BeginForm("Agendar", "Citas", FormMethod.Post))
             {
-                <div class="mb-3">
+                <div class="mb-4">
                     <label class="form-label">Vehículo</label>
-                    @Html.DropDownList("IdVehiculo", ViewBag.Vehiculos as SelectList, "Seleccione un vehículo", new { @class = "form-control", required = "required" })
+                    <div class="input-group">
+                        @Html.DropDownList("IdVehiculo", ViewBag.Vehiculos as SelectList, "Seleccione un vehículo", new { @class = "form-control", required = "required" })
+                        <button type="button" class="btn btn-agregar" data-bs-toggle="modal" data-bs-target="#modalAgregarVehiculo">
+                            Agregar Vehículo
+                        </button>
+                    </div>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-4">
                     <label class="form-label">Fecha y Hora</label>
                     @Html.TextBoxFor(m => m.FechaHora, new { @class = "form-control", type = "datetime-local", required = "required" })
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-warning text-dark">✔️ Confirmar Cita</button>
-                    <a href="@Url.Action("Index")" class="btn btn-light">⬅️ Volver</a>
+                    <button type="submit" class="btn btn-confirmar">✔️ Confirmar Cita</button>
+                    <a href="@Url.Action("Index", "Citas")" class="btn btn-cancelar">⬅️ Volver</a>
                 </div>
             }
         </div>
     </div>
 </div>
+
+<!-- Modal para Agregar Vehículo -->
+<div class="modal fade" id="modalAgregarVehiculo" tabindex="-1" aria-labelledby="modalAgregarVehiculoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-warning">
+                <h5 class="modal-title">🚗 Agregar Nuevo Vehículo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body bg-secondary text-white">
+                <form id="formAgregarVehiculo">
+                    <input type="hidden" id="ClienteID" name="ClienteID" value="@Session["ClienteID"]" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Marca</label>
+                        <input type="text" id="Marca" name="Marca" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Modelo</label>
+                        <input type="text" id="Modelo" name="Modelo" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Año</label>
+                        <input type="number" id="Año" name="Año" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Placas</label>
+                        <input type="text" id="Placas" name="Placas" class="form-control" required />
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-warning text-dark">✔️ Guardar Vehículo</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">❌ Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript para Insertar Vehículo mediante AJAX -->
+<script>
+    document.getElementById("formAgregarVehiculo").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+       fetch('/Citas/AgregarVehiculo', {
+    method: "POST",
+    body: formData
+})
+
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let selectVehiculo = document.getElementById("IdVehiculo");
+                let option = new Option(data.nombreVehiculo, data.idVehiculo, true, true);
+                selectVehiculo.add(option);
+                selectVehiculo.value = data.idVehiculo;
+
+                var modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarVehiculo'));
+                modal.hide();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+</script>
+
+
+<!-- Estilos -->
+<style>
+    body {
+        background: url('https://images.unsplash.com/photo-1613214149922-f1809c99b414?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center;
+        font-family: Arial, sans-serif;
+    }
+
+    .citas-container {
+        width: 90%;
+        margin: 40px auto;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+    }
+
+    .card-header {
+        background-color: #021730;
+        color: #F9CD16;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 10px 10px 0 0;
+        padding: 15px;
+    }
+
+    .card-body {
+        background-color: #ffffff;
+        color: black;
+    }
+
+    .btn-agregar {
+        background-color: #F9CD16;
+        color: black;
+        font-weight: bold;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        margin-left: 10px;
+    }
+
+        .btn-agregar:hover {
+            background-color: #d9b013;
+        }
+
+    .btn-confirmar {
+        background-color: #F9CD16;
+        color: black;
+        font-weight: bold;
+        padding: 12px 20px;
+        border-radius: 5px;
+        border: none;
+    }
+
+        .btn-confirmar:hover {
+            background-color: #d9b013;
+        }
+
+    .btn-cancelar {
+        background-color: transparent;
+        border: 2px solid #F9CD16;
+        color: #F9CD16;
+        font-weight: bold;
+        padding: 10px 18px;
+        border-radius: 5px;
+        margin-left: 10px;
+    }
+
+        .btn-cancelar:hover {
+            background-color: #F9CD16;
+            color: black;
+        }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal-header {
+        background-color: #021730;
+        color: #F9CD16;
+    }
+
+    .modal-body {
+        background-color: #ffffff;
+        color: black;
+    }
+</style>

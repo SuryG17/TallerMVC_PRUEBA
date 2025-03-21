@@ -15,7 +15,6 @@ namespace TallerMecanicoMVC.Controllers
         }
 
         [HttpPost]
-        //omen
         public ActionResult Registro(Cliente cliente)
         {
             if (!ModelState.IsValid)
@@ -39,7 +38,11 @@ namespace TallerMecanicoMVC.Controllers
                         cmd.Parameters.AddWithValue("@Apellido", cliente.Apellido);
                         cmd.Parameters.AddWithValue("@Email", cliente.Email);
                         cmd.Parameters.AddWithValue("@Telefono", cliente.Telefono);
-                        cmd.Parameters.AddWithValue("@Contraseña", cliente.Contraseña); 
+                        cmd.Parameters.AddWithValue("@Contraseña", cliente.Contraseña);
+                        cmd.Parameters.AddWithValue("@Marca", cliente.Marca);
+                        cmd.Parameters.AddWithValue("@Modelo", cliente.Modelo);
+                        cmd.Parameters.AddWithValue("@Año", cliente.Año);
+                        cmd.Parameters.AddWithValue("@Placas", cliente.Placas);
 
                         cmd.ExecuteNonQuery();
                     }
