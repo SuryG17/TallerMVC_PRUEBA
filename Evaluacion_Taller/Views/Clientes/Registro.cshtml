@@ -74,14 +74,14 @@
                 margin-top: 10px;
             }
 
-        /* 🔹 Lado Derecho: Formulario con Scroll Interno */
+       
         .right-side {
             width: 50%;
             padding: 40px;
-            background-color: #58606D; /* Gris oscuro */
+            background-color: #58606D; 
             color: white;
             overflow-y: auto;
-            max-height: 500px; /* Agrega un límite con scroll */
+            max-height: 500px; 
         }
 
             .right-side h3 {
@@ -91,7 +91,7 @@
                 margin-bottom: 20px;
             }
 
-        /* 🔹 Estilo de Inputs */
+        /*   Inputs */
         .form-control {
             margin-bottom: 15px;
             border-radius: 5px;
@@ -102,7 +102,7 @@
             width: 100%;
         }
 
-        /* 🔹 Estilo Botones */
+        /* Botones */
         .btn-primary {
             width: 100%;
             font-size: 18px;
@@ -130,7 +130,7 @@
                 color: black;
             }
 
-        /* 🔹 Estilos para Mostrar/Ocultar contraseña */
+
         .password-container {
             position: relative;
         }
@@ -187,7 +187,7 @@
                 @Html.TextBoxFor(m => m.Telefono, new { @class = "form-control", required = "required", placeholder = "Ingrese su teléfono" })
                 @Html.ValidationMessageFor(m => m.Telefono, "", new { @class = "text-danger" })
 
-                <!-- 🔽 Botón para Mostrar/Ocultar Datos del Vehículo -->
+                <!--Botón para Mostrar/Ocultar Datos del Vehículo -->
                 <button class="btn btn-info w-100 mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#vehiculoCollapse">
                     ➕ Añadir Vehículo
                 </button>

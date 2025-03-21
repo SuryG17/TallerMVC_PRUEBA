@@ -213,6 +213,7 @@
     <Content Include="Views\Citas\Crear.cshtml" />
     <Content Include="Views\Citas\Editar.cshtml" />
     <Content Include="Views\Citas\Eliminar.cshtml" />
+    <Content Include="Views\Citas\VerDetalles.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
