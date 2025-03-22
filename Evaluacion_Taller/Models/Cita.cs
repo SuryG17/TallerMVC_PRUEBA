@@ -28,5 +28,9 @@ namespace TallerMecanicoMVC.Models
         public string Marca { get; set; }
         public string Modelo { get; set; }
         public string Placas { get; set; }
+        public string NombreVehiculo { get; set; }
+
+
+
     }
 }

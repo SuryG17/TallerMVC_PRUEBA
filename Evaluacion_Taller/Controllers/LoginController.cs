@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Web.Mvc;
 using TallerMecanicoMVC.Models;
@@ -8,11 +9,19 @@ namespace TallerMecanicoMVC.Controllers
 {
     public class LoginController : Controller
     {
+        [HttpGet]
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
         public ActionResult Index(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                    return View();
+                ViewBag.Error = "⚠️ Por favor, completa todos los campos.";
+                return View();
             }
 
             string hashedPassword = Cliente.EncriptarMD5(password);
@@ -20,61 +29,38 @@ namespace TallerMecanicoMVC.Controllers
             using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["TallerMecanico"].ConnectionString))
             {
                 con.Open();
+                SqlCommand cmd = new SqlCommand("SP_TM_ValidarUsuario", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@Password", hashedPassword);
 
-                //Verificar si el usuario existe
-                string queryUsuario = "SELECT COUNT(*) FROM (SELECT Email FROM Clientes UNION SELECT Email FROM Administradores) AS Usuarios WHERE Email = @Email";
-                using (SqlCommand cmdUsuario = new SqlCommand(queryUsuario, con))
+                using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    cmdUsuario.Parameters.AddWithValue("@Email", email);
-                    int usuarioExiste = (int)cmdUsuario.ExecuteScalar();
-
-                    if (usuarioExiste == 0)
+                    if (reader.HasRows)
                     {
-                        ViewBag.Error = "⚠️ El usuario no está registrado.";
-                        return View();
-                    }
-                }
+                        reader.Read();
+                        string tipoUsuario = reader["Rol"].ToString();
 
-                // Verificar si es un Cliente
-                string queryCliente = "SELECT ID, Nombre FROM Clientes WHERE Email = @Email AND Contraseña = @Password";
-                using (SqlCommand cmdCliente = new SqlCommand(queryCliente, con))
-                {
-                    cmdCliente.Parameters.AddWithValue("@Email", email);
-                    cmdCliente.Parameters.AddWithValue("@Password", hashedPassword);
-                    using (SqlDataReader readerCliente = cmdCliente.ExecuteReader())
-                    {
-                        if (readerCliente.HasRows)
+                        Session["Usuario"] = reader["Nombre"].ToString();
+                        Session["TipoUsuario"] = tipoUsuario;
+                        Session["UsuarioID"] = reader["ID"].ToString();
+
+                        if (tipoUsuario == "Cliente")
                         {
-                            readerCliente.Read();  // 🔥 Importante: leer los datos antes de acceder
-                            Session["Usuario"] = readerCliente["Nombre"].ToString();
-                            Session["TipoUsuario"] = "Cliente";
-                            Session["ClienteID"] = readerCliente["ID"].ToString();  // 🔥 Ahora sí se almacena bien
-                            Console.WriteLine("📢 ClienteID guardado en sesión: " + Session["ClienteID"]); // Depuración
+                            Session["ClienteID"] = reader["ID"].ToString();
                             return RedirectToAction("Index", "Citas");
                         }
-                    }
-                }
-
-                //  Verificar si es un Administrador
-                string queryAdmin = "SELECT ID, Nombre FROM Administradores WHERE Email = @Email AND Contraseña = @Password";
-                using (SqlCommand cmdAdmin = new SqlCommand(queryAdmin, con))
-                {
-                    cmdAdmin.Parameters.AddWithValue("@Email", email);
-                    cmdAdmin.Parameters.AddWithValue("@Password", hashedPassword);
-                    using (SqlDataReader readerAdmin = cmdAdmin.ExecuteReader())
-                    {
-                        if (readerAdmin.HasRows)
+                        else if (tipoUsuario == "Administrador")
                         {
-                            readerAdmin.Read();
-                            Session["Usuario"] = readerAdmin["Nombre"].ToString();
-                            Session["TipoUsuario"] = "Administrador";
-                            return RedirectToAction("Index", "Citas"); // Administrador redirigido a listado de citas
+                            return RedirectToAction("Index", "Administradores");
                         }
                     }
+                   
                 }
             }
 
-            ViewBag.Error = "⚠️ Contraseña incorrecta.";
+       
+            ViewBag.Error = "❌ Usuario o contraseña incorrectos..";
             return View();
         }
 

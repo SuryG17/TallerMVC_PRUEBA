@@ -8,7 +8,7 @@ namespace TallerMecanicoMVC.Models
         public int IdVehiculo { get; set; }
 
         [Required]
-        public int ClienteID { get; set; }  // Relación con Cliente
+        public int ClienteID { get; set; } 
 
         [Required]
         public string Marca { get; set; }
@@ -21,5 +21,7 @@ namespace TallerMecanicoMVC.Models
 
         [Required]
         public string Placas { get; set; }
+
+
     }
 }

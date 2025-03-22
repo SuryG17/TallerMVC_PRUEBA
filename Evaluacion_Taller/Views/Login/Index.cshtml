@@ -139,6 +139,7 @@
 </head>
 <body>
 
+    
     <main class="login-container">
         <section class="left-side">
             <h2>Bienvenido al Taller</h2>
@@ -154,8 +155,17 @@
 
             @if (ViewBag.Error != null)
             {
-                <div class="alert alert-danger" role="alert">@ViewBag.Error</div>
+                <div class="alert alert-danger text-center fw-bold mb-3">
+                    @ViewBag.Error
+                </div>
             }
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success text-center fw-bold mb-3">
+                    @TempData["Success"]
+                </div>
+            }
+
 
             @using (Html.BeginForm("Index", "Login", FormMethod.Post, new { @class = "login-form", autocomplete = "off" }))
             {
