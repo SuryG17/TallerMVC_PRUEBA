@@ -59,5 +59,10 @@ namespace TallerMecanicoMVC.Models
                 return sb.ToString();
             }
         }
+
+        public DateTime FechaRegistro { get; set; }
+            public string Rol { get; set; }
+
+
     }
 }

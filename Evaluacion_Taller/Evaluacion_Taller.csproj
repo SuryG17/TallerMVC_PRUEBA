@@ -120,6 +120,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AdministradoresController.cs" />
     <Compile Include="Controllers\CitasController.cs" />
     <Compile Include="Controllers\ClientesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -129,6 +130,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Cita.cs" />
+    <Compile Include="Models\CitaViewModel.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\SeguridadHelper.cs" />
     <Compile Include="Models\Vehiculo.cs" />
@@ -212,8 +214,9 @@
     <Content Include="Views\Citas\Index.cshtml" />
     <Content Include="Views\Citas\Crear.cshtml" />
     <Content Include="Views\Citas\Editar.cshtml" />
-    <Content Include="Views\Citas\Eliminar.cshtml" />
     <Content Include="Views\Citas\VerDetalles.cshtml" />
+    <Content Include="Views\Administradores\Index.cshtml" />
+    <Content Include="Views\Administradores\ListadoUsuarios.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

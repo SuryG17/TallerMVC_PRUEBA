@@ -62,6 +62,8 @@ namespace TallerMecanicoMVC.Controllers
                     ViewBag.Error = "Ocurrió un error inesperado.";
                 }
             }
+            TempData["Success"] = "✅ Registro exitoso";
+
             return View(cliente);
         }
     }
