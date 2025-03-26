@@ -1,0 +1,146 @@
+﻿@model TallerMecanicoMVC.Models.Cita
+
+@{
+    ViewBag.Title = "Detalles de la Cita";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Estilos personalizados -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://images.unsplash.com/photo-1599256631012-9c2b32bfa8bc?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .citas-container {
+            width: 80%;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        .card-header {
+            background-color: #021730;
+            color: #F9CD16;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            padding: 15px;
+        }
+
+        .card-body {
+            background-color: #ffffff;
+            color: black;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .btn-warning {
+            background-color: #F9CD16;
+            color: black;
+            font-weight: bold;
+        }
+
+        .btn-light {
+            background-color: transparent;
+            color: #F9CD16;
+            border: 2px solid #F9CD16;
+            font-weight: bold;
+        }
+
+        .btn-warning:hover {
+            background-color: #d9b013;
+        }
+
+        .btn-light:hover {
+            background-color: #F9CD16;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div class="card citas-container">
+            <div class="card-header text-center">
+                <h3>🛠️ Detalles de la Cita</h3>
+            </div>
+            <div class="card-body">
+
+                <!-- Alertas -->
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Error:</strong> @ViewBag.Error
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                    </div>
+                }
+                @if (ViewBag.Success != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Éxito:</strong> @ViewBag.Success
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                    </div>
+                }
+
+                @using (Html.BeginForm("ActualizarCita", "Citas", FormMethod.Post))
+                {
+                    <!-- Fecha y Hora -->
+                    <div class="mb-4">
+                        <label for="FechaHora" class="form-label">Fecha y Hora</label>
+                        <input type="datetime-local" class="form-control" id="FechaHora" name="FechaHora"
+                               value="@Model.FechaHora.ToString("yyyy-MM-ddTHH:mm")" required />
+                    </div>
+
+                    <!-- Vehículo (solo lectura) -->
+                    <div class="mb-4">
+                        <label class="form-label">Vehículo asignado</label>
+                        <input type="text" class="form-control" value="@Model.NombreVehiculo" readonly />
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="mb-4">
+                        <label class="form-label">Estado</label>
+                        <input type="text" class="form-control" value="@Model.Estado" readonly />
+                    </div>
+
+                    <!-- Comentarios -->
+                    <div class="mb-4">
+                        <label class="form-label">Comentarios</label>
+                        <textarea class="form-control" readonly>@Model.Comentarios</textarea>
+                    </div>
+
+                    @Html.HiddenFor(m => m.IdCita)
+                    @Html.HiddenFor(m => m.IdVehiculo)
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-warning">Actualizar Cita</button>
+                        <a href="@Url.Action("Index", "Citas")" class="btn btn-light">⬅️ Volver</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</body>
+</html>

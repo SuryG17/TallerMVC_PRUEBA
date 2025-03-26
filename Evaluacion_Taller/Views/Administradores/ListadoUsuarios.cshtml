@@ -1,0 +1,178 @@
+﻿@model List<TallerMecanicoMVC.Models.Cliente>
+
+@{
+    ViewBag.Title = "Listado de Clientes";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Listado de Clientes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') no-repeat center center;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .clientes-container {
+            width: 95%;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        .card-header {
+            background-color: #021730;
+            color: #F9CD16;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            padding: 15px;
+        }
+
+        .table th {
+            background-color: #F9CD16;
+            text-align: center;
+        }
+
+        .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .btn-op {
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div class="card clientes-container">
+            <div class="card-header">
+                👥 Listado de Clientes
+            </div>
+            <div class="card-body">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success text-center fw-bold">
+                        @TempData["Success"]
+                    </div>
+                }
+
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Rol</th>
+                            <th>Fecha de Registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cliente in Model)
+                        {
+                            <tr>
+                                <td>@cliente.ID</td>
+                                <td>@cliente.Nombre @cliente.Apellido</td>
+                                <td>@cliente.Email</td>
+                                <td>@cliente.Telefono</td>
+                                <td>@cliente.Rol</td>
+                                <td>@cliente.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary btn-op" data-bs-toggle="modal" data-bs-target="#modalEditarRol"
+                                            data-id="@cliente.ID" data-nombre="@cliente.Nombre @cliente.Apellido" data-rol="@cliente.Rol">
+                                        <i class="fas fa-user-cog"></i> Editar Rol
+                                    </button>
+
+                                    <a href="@Url.Action("EliminarUsuario", "Administradores", new { ID = cliente.ID })"
+                                       class="btn btn-sm btn-danger btn-op"
+                                       onclick="return confirm('¿Seguro que deseas eliminar este cliente y todos sus datos?');">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="text-center mt-4">
+                    <a href="@Url.Action("Index", "Administradores")" class="btn btn-secondary">⬅️ Volver al Panel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Rol -->
+    <div class="modal fade" id="modalEditarRol" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="post" action="@Url.Action("EditarRol", "Administradores")">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="modalLabel">✏️ Editar Rol del Cliente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="clienteId" />
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del Cliente</label>
+                            <input type="text" class="form-control" id="clienteNombre" disabled />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nuevo Rol</label>
+                            <select name="nuevoRol" class="form-select" required>
+                                <option value="">Selecciona un rol</option>
+                                <option value="Cliente">Cliente</option>
+                                <option value="Administrador">Administrador</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-warning">Guardar Cambios</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const modal = document.getElementById('modalEditarRol');
+        modal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const id = button.getAttribute('data-id');
+            const nombre = button.getAttribute('data-nombre');
+            const rol = button.getAttribute('data-rol');
+
+            document.getElementById('clienteId').value = id;
+            document.getElementById('clienteNombre').value = nombre;
+
+            const select = modal.querySelector('select[name="nuevoRol"]');
+            if (select) {
+                select.value = rol;
+            }
+        });
+    </script>
+
+</body>
+</html>
